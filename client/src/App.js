@@ -24,6 +24,9 @@ import FavoritesMenu from './scenes/global/FavoritesMenu';
 import UpdateProfile from './scenes/profile/UpdateProfile';
 import Orders from './scenes/profile/Orders';
 import Users from './scenes/profile/Users';
+import Items from './scenes/profile/Items';
+import ModifyItem from './scenes/profile/ModifyItem';
+import Search from './scenes/search/Search';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -52,11 +55,16 @@ function App() {
                   <Route path='/' element={<Home />} exact/>
                   <Route path='item/:itemId' element={<ItemDetails />} />
                   <Route path="category/:categoryId" element={<Category />} />
+                  <Route path="search/" element={<Search />} />
+                  <Route path="search/:query/" element={<Search />} />
                   <Route element={<PrivateRoutes />}>
                     <Route path='profile' element={<Profile />} />
                     <Route path='profile/update-profile' element={<UpdateProfile />} />
                     <Route path='profile/orders' element={<Orders />} />
                     <Route path='profile/users' element={<Users />} />
+                    <Route path='profile/items' element={<Items />} />
+                    <Route path='profile/items/modify-item/' element={<ModifyItem />} />
+                    <Route path='profile/items/modify-item/:itemId' element={<ModifyItem />} />
                     <Route path='checkout' element={<Checkout />} />
                     <Route path='checkout/success' element={<Confirmation />} />
                     <Route path='checkout/failure' element={<Failure />} />

@@ -1,15 +1,17 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.db.models import Q
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import ItemSerializer, CategorySerializer, UserSerializer, ProfileUpdateSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, FavoriteItemSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.parsers import MultiPartParser
+from .serializers import ItemSerializer, CategorySerializer, UserSerializer, ProfileUpdateSerializer, AddressSerializer, OrderSerializer
 
 import datetime
 import stripe
@@ -29,7 +31,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['role'] = user.role
         
         return token
-    
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
@@ -200,6 +202,56 @@ class ChangeUserRoleView(APIView):
 
         return Response({"message": "User role updated successfully."}, status=status.HTTP_200_OK)
 
+class ModifyItemView(APIView):
+    permission_classes = (IsAuthenticated,)
+    parser_classes = (MultiPartParser,)
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        if user.role == 'vendor':
+            item_id = request.data.get('itemId')
+            try:
+                item = Item.objects.get(pk=item_id)
+            except Item.DoesNotExist:
+                return Response({"error": "Item not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            mutable_data = request.data.copy()
+
+            if 'image' not in mutable_data:
+                mutable_data['image'] = item.image
+
+            item.name = request.data.get('name', item.name)
+            item.category_id = request.data.get('category', item.category_id)
+            item.mainCategory = request.data.get('mainCategory', item.mainCategory)
+            item.price = request.data.get('price', item.price)
+            image_file = request.data.get('image')
+            if image_file is not None:
+                item.image = image_file
+
+            item.save()
+
+            return Response({"success": "Item updated successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Access denied"}, status=status.HTTP_403_FORBIDDEN)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        if user.role == 'vendor':
+
+            item = Item()
+            item.name = request.data.get('name')
+            item.category_id = request.data.get('category')
+            item.mainCategory = request.data.get('mainCategory')
+            item.price = request.data.get('price')
+            image_file = request.data.get('image')
+            if image_file is not None:
+                item.image = image_file
+
+            item.save()
+            return Response({"success": "Item created successfully"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"error": "Access denied"}, status=status.HTTP_403_FORBIDDEN)
+
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
@@ -284,7 +336,55 @@ def get_orders(request):
                 'quantity': order_item.quantity
             }
             order_item_data.append(item_data)
+
+        client = User.objects.get(id=order_data["client"])
+        
+        order_data['client'] = client.email
         order_data['order_items'] = order_item_data
         serialized_data.append(order_data)
     
     return Response(serialized_data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_item(request, item_id):
+    if request.user.role != 'vendor':
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+    try:
+        item = Item.objects.get(id=item_id)
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    except Item.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['GET'])
+def search_item(request):
+    search_query = request.GET.get('query', '')
+    search_words = search_query.split()
+
+    if search_words:
+        query = Q()
+        for word in search_words:
+            query &= Q(name__icontains=word)
+
+        items = Item.objects.filter(query)
+        serializer = ItemSerializer(items, many=True)
+        return Response(serializer.data)
+
+    return Response([])
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def cancel_order(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return Response({"error": "Order not found"}, status=404)
+
+    order.cancelled = True
+    order.save()
+
+    serializer = OrderSerializer(order)
+    return Response(serializer.data)
+

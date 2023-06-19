@@ -30,10 +30,14 @@ const Signup = ({updateSignedUp}) => {
 
     const navigate = useNavigate()
 
+    const handleLoginClick = () => {
+        updateSignedUp();
+    };
+
     const handleFormSubmit = async (values, actions) => {
         const { username, email, password } = values
         const newValues = {username, email, password}
-        console.log(newValues)
+        
         try {
             const response = await fetch('http://127.0.0.1:8000/api/register/', {
                 method: 'POST',
@@ -45,14 +49,14 @@ const Signup = ({updateSignedUp}) => {
       
             if (response.ok) {
                 updateSignedUp()
-                alert("Successfully Signed up!")
+                alert("Inscrit avec succès !")
                 navigate('/')
             } else {
                 actions.resetForm({})
-                alert('Registration failed');
+                alert("Échec de l'enregistrement");
             }
         } catch (error) {
-            console.error('Error occurred during registration:', error);
+            console.error("Une erreur s'est produite lors de l'inscription :", error);
         }
         actions.setTouched({})
     }
@@ -168,7 +172,20 @@ const Signup = ({updateSignedUp}) => {
                     )
                 }
             </Formik>
-            <Typography mt="15px">Vous avez un compte ? <a href="#" style={{textDecorationLine: "none"}}>Connectez-vous</a></Typography>
+            <Typography mt="15px">
+                Vous avez un compte ?{' '}
+                <Button
+                onClick={handleLoginClick}
+                style={{
+                    textTransform: 'none',
+                    color: 'blue',
+                    fontSize: 'inherit',
+                    padding: 0,
+                }}
+                >
+                Connectez-vous
+                </Button>
+            </Typography>
         </Box>
     )
 }

@@ -67,10 +67,10 @@ const Users = () => {
             })
             const data = await response.json()
             if(!response.ok) {
-                alert("An Error has occured")
+                alert("Une erreur est survenue!")
             }
         } catch(error) {
-            alert("An error has occured!")
+            alert("Une erreur est survenue!")
             console.error(error)
         }
     }

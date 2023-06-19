@@ -44,12 +44,12 @@ const FavoritesMenu = () => {
             })
             const data = await response.json()
             if(response.status == 401) {
-                alert("An error has occured! Logging out")
+                alert("Une erreur est survenue! Déconnexion maintenant")
                 logoutUser()
                 navigate("/")
             }
         } catch(error) {
-            alert("An error has occured!")
+            alert("Une erreur est survenue!")
             console.error(error)
         }
     }

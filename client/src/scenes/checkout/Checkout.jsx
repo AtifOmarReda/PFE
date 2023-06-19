@@ -38,12 +38,13 @@ const Checkout = () => {
             if(response.status === 200){
                 setBillingAddress(data)
                 setLoading(false)
-            } else if(response.statusText === 'Unauthorized'){
+            } else{
+                alert("Une erreur est survenue! Déconnexion maintenant")
                 logoutUser()
                 navigate("/")
             }
         } catch (error) {
-            alert('An error has occured! Logging out');
+            alert('Une erreur est survenue! Déconnexion maintenant');
             logoutUser()
             navigate("/")
         }
@@ -220,6 +221,7 @@ const Checkout = () => {
                                             borderRadius: 0,
                                             padding: "15px 40px"
                                         }}
+                                        onClick={() => {setActiveStep(activeStep-1)}}
                                     >Retourner</Button>
                                 )}
                                 <Button

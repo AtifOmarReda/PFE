@@ -6,9 +6,9 @@ const Failure = () => {
   return (
     <Box m="90px auto" width="80%" height="50vh">
       <Alert severity="error">
-        <AlertTitle>Failure</AlertTitle>
-        There was an error creating your order —{" "}
-        <strong>Please try again</strong>
+        <AlertTitle>Échec</AlertTitle>
+        Une erreur s'est produite lors de la création de votre commande —{" "}
+        <strong>Veuillez réessayer!</strong>
       </Alert>
     </Box>
   );

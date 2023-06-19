@@ -36,13 +36,15 @@ const ItemDetails = () => {
             })
             const data = await response.json()
             if(response.status == 401) {
-                alert("An error has occured! Logging out")
+                alert("Une erreur est survenue! Déconnexion maintenant")
                 logoutUser()
                 navigate("/")
-            } else if(response.status == 201) setRemoveFavorite(true)
+            } else if(response.status == 400){
+                alert("L'élément n'existe pas dans le backend")
+            }else if(response.status == 201) setRemoveFavorite(true)
             else if(response.status == 200) setRemoveFavorite(false)
         } catch(error) {
-            alert("An error has occured!")
+            alert("Une erreur est survenue!")
             console.error(error)
         }
     }
@@ -77,11 +79,12 @@ const ItemDetails = () => {
 
     useEffect(() => {
         if (item && !loadingFavorites){
+            setRemoveFavorite(false)
             for(let i = 0;i<favorites.length;i++){
                 if(favorites[i].id == item[0].id) setRemoveFavorite(true)
             }
         }
-    }, [item, loadingFavorites, itemId])
+    }, [item, loadingFavorites, favorites])
 
     if(isLoading || loadingFavorites){
         return null
@@ -155,8 +158,12 @@ const ItemDetails = () => {
                                     <Typography 
                                         sx={{ ml: "5px", '&:hover': { cursor: "pointer" }}}
                                         onClick={() => {
-                                            dispatch(addToFavorites(item[0]))
-                                            checkFavorite()
+                                            if(user) {
+                                                dispatch(addToFavorites(item[0]))
+                                                checkFavorite()
+                                            } else {
+                                                alert("Vous devez être connecté pour ajouter aux favoris!")
+                                            }
                                         }}
                                     >
                                         AJOUTER AUX FAVORIS
@@ -169,8 +176,10 @@ const ItemDetails = () => {
                                 <Typography 
                                     sx={{ ml: "5px", '&:hover': { cursor: "pointer" }}}
                                     onClick={() => {
-                                        dispatch(removeFromFavorites(item[0]))
-                                        checkFavorite()
+                                        if(user) {
+                                            dispatch(removeFromFavorites(item[0]))
+                                            checkFavorite()
+                                        }
                                     }}
                                 >
                                     RETIRER DES FAVORIS

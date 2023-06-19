@@ -20,14 +20,14 @@ export const AuthProvider = ({children}) => {
             body: JSON.stringify(formValues)
         })
         let data = await response.json()
-        if(response.status === 200) {
+        if (!response.ok) {
+            alert("Nom d'utilisateur ou mot de passe incorrect. si vous êtes sûr du nom d'utilisateur et du mot de passe, contactez un administrateur");
+            return false
+        } else{
             setAuthTokens(data)
             setUser(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
             return true
-        } else{
-            alert('Something went wrong!')
-            return false
         }
     }
 

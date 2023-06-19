@@ -21,6 +21,10 @@ urlpatterns = [
     path('address/', views.getAddress),
     path('favorites/', views.get_favorite_items),
     path('create-favorite/', views.CreateFavoriteItemView.as_view()),
+    path('modify-item/', views.ModifyItemView.as_view()),
+    path('delete-item/<int:item_id>/', views.delete_item, name='delete-item'),
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('search-item/', views.search_item, name='search-item'),
+    path('orders/<int:order_id>/cancel/', views.cancel_order, name='cancel-order'),
 ]

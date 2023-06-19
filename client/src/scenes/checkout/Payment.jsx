@@ -21,7 +21,7 @@ const Payment = ({values, touched, errors, handleBlur, handleChange}) => {
                 />
                 <TextField
                     fullWidth
-                    type="text"
+                    type="number"
                     label="Numéro de téléphone"
                     onBlur={handleBlur}
                     onChange={handleChange}

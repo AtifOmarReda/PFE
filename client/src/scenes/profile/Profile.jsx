@@ -4,6 +4,7 @@ import { Box, Typography, Button, useMediaQuery } from "@mui/material";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import {shades} from "../../theme"
 import AuthContext from "../../context/AuthContext";
 
@@ -92,6 +93,30 @@ const Profile = () => {
                             }}
                             onClick={() => navigate("./users")}
                         >Liste des utilisateurs</Button>
+                    </Box>
+                }
+                {user.role == 'vendor' &&
+                    <Box 
+                        boxShadow="3" 
+                        sx={{ 
+                            maxHeight: "500px", 
+                            overflow: "auto",
+                            padding: "20px",
+                            backgroundColor: "rgb(0, 0, 0, 0.01)"
+                            }}
+                    >
+                        <Typography variant="h3" marginBottom="20px">Produits</Typography>
+                        <InventoryIcon sx={{fontSize: "200px"}}/><br></br>
+                        <Button 
+                            variant="contained"                             
+                            sx={{
+                                backgroundColor: "#222222",
+                                color: "white",
+                                borderRadius: 0,
+                                padding: "10px 40px"
+                            }}
+                            onClick={() => navigate("./items")}
+                        >Liste des produits</Button>
                     </Box>
                 }
             </Box>

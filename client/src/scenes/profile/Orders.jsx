@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, List, ListItem } from '@mui/material';
+import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, List, ListItem } from '@mui/material';
 import AuthContext from "../../context/AuthContext";
 import {shades} from "../../theme"
 
@@ -10,6 +10,27 @@ const Orders = () => {
     const [isLoading, setIsloading] = useState(true)
     const [orders, setOrders] = useState(null)
     const { authTokens } = useContext(AuthContext)
+
+    const cancelOrder = async (orderId) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/orders/${orderId}/cancel/`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'JWT ' + String(authTokens.access)
+                }
+            });
+    
+            if (response.ok) {
+                getOrders();
+            } else {
+                alert("Une erreur s'est produite lors de l'annulation d'une commande.");
+            }
+            } catch (error) {
+                alert("Une erreur s'est produite lors de l'annulation d'une commande.");
+                console.error(error);
+            }
+    };
  
     const getOrders = async () => {
         try{
@@ -25,12 +46,16 @@ const Orders = () => {
                 setOrders(data)
                 setIsloading(false)
             } else {
-                alert("An Error has occured")
+                alert("Une erreur est survenue!")
             }
         } catch(error) {
-            alert("An error has occured!")
+            alert("Une erreur est survenue!")
             console.error(error)
         }
+    }
+
+    const handleCancelOrder = (orderId) => {
+        cancelOrder(orderId)
     }
 
     useEffect(() => {
@@ -45,6 +70,7 @@ const Orders = () => {
                 <Table>
                     <TableHead>
                     <TableRow>
+                        <TableCell>Utilisateur</TableCell>
                         <TableCell>Date</TableCell>
                         <TableCell>Produits</TableCell>
                         <TableCell>Annulé</TableCell>
@@ -53,17 +79,32 @@ const Orders = () => {
                     <TableBody>
                     {orders.map((order) => (
                         <TableRow key={order.id}>
-                        <TableCell>{order.date}</TableCell>
-                        <TableCell>
-                            <List>
-                            {order.order_items.map((item, index) => (
-                                <ListItem key={index}>
-                                    <Typography variant="h4">{item.name} {`x${item.quantity}`}</Typography>
-                                </ListItem>
-                            ))}
-                            </List>
-                        </TableCell>
-                        <TableCell>{order.cancelled ? 'Oui' : 'Non'}</TableCell>
+                            <TableCell>{order.client}</TableCell>
+                            <TableCell>{order.date}</TableCell>
+                            <TableCell>
+                                <List>
+                                {order.order_items.map((item, index) => (
+                                    <ListItem key={index}>
+                                        <Typography variant="h4">{item.name} {`x${item.quantity}`}</Typography>
+                                    </ListItem>
+                                ))}
+                                </List>
+                            </TableCell>
+                            <TableCell>
+                                {order.cancelled 
+                                ? 'Oui' 
+                                :   <Button 
+                                        variant="contained"                             
+                                        sx={{
+                                            backgroundColor: "#222222",
+                                            color: "white",
+                                            borderRadius: 0,
+                                            padding: "10px 40px"
+                                        }}
+                                        onClick={() => handleCancelOrder(order.id)}
+                                    >Annuler commande</Button>
+                                }
+                            </TableCell>
                         </TableRow>
                     ))}
                     </TableBody>

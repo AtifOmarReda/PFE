@@ -29,12 +29,12 @@ const UpdateProfile = () => {
                 setAddress(data)
                 setLoading(false)
             } else if(response.statusText === 'Unauthorized'){
+                alert('Une erreur est survenue! Déconnexion maintenant');
                 logoutUser()
                 navigate("/")
             }
         } catch (error) {
-            console.log(error)
-            alert('An error has occured! Logging out');
+            alert('Une erreur est survenue! Déconnexion maintenant');
             logoutUser()
             navigate("/")
         }

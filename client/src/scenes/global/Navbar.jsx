@@ -49,8 +49,7 @@ const Navbar = () => {
     }
 
     const updateSignedUp = () => {
-        setOpen(false);
-        console.log(open)
+        setValue("login")    
     }
 
     const handleToggleSearchBar = (event) => {

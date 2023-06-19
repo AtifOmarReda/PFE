@@ -28,8 +28,7 @@ const Confirmation = () => {
         },
         body: JSON.stringify(requestBody)
     })
-    const data = await response.json()
-}
+  }
 
   useEffect(() => {
 
