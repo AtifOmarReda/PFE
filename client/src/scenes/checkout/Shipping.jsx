@@ -13,51 +13,17 @@ const Shipping = ({
         <Box m="30px auto">
             <Box>
                 <Typography sx={{ mb: "15px"}} fontSize="18px">
-                    Détails de facturation
+                    Informations sur la livraison
                 </Typography>
                 <AddressForm 
-                    type="billingAddress"
-                    values={values.billingAddress}
+                    type="shippingAddress"
+                    values={values.shippingAddress}
                     errors={errors}
                     touched={touched}
                     handleBlur={handleBlur}
                     handleChange={handleChange}
                 />
             </Box>
-
-            <Box mb="20px">
-                <FormControlLabel 
-                    label="Même pour l'adresse de livraison."
-                    control={
-                        <Checkbox 
-                            defaultChecked
-                            value={values.shippingAddress.isSameAddress}
-                            onChange={() =>
-                                setFieldValue(
-                                    "shippingAddress.isSameAddress",
-                                    !values.shippingAddress.isSameAddress
-                                )
-                            }
-                        />
-                    }
-                />
-            </Box>
-
-            {!values.shippingAddress.isSameAddress && (
-                <Box>
-                    <Typography sx={{ mb: "15px"}} fontSize="18px">
-                        Informations sur la livraison
-                    </Typography>
-                    <AddressForm 
-                        type="shippingAddress"
-                        values={values.shippingAddress}
-                        errors={errors}
-                        touched={touched}
-                        handleBlur={handleBlur}
-                        handleChange={handleChange}
-                    />
-                </Box>
-            )}
         </Box>
     )
 }

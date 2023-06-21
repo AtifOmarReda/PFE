@@ -18,7 +18,7 @@ const Checkout = () => {
 
     const { user, logoutUser, authTokens } = useContext(AuthContext)
 
-    const [billingAddress, setBillingAddress] = useState(null)
+    const [shippingAddress, setShippingAddress] = useState(null)
     const [loading, setLoading] = useState(true)
 
     const navigate = useNavigate()
@@ -36,7 +36,7 @@ const Checkout = () => {
             let data = await response.json()
 
             if(response.status === 200){
-                setBillingAddress(data)
+                setShippingAddress(data)
                 setLoading(false)
             } else{
                 alert("Une erreur est survenue! Déconnexion maintenant")
@@ -55,64 +55,26 @@ const Checkout = () => {
       }, [user]);
 
     const initialValues = {
-        billingAddress: billingAddress,
-        shippingAddress: {
-            isSameAddress: true,
-            first_name: "",
-            last_name: "",
-            street1: "",
-            street2: "",
-            city: "",
-            state: "",
-            zipcode: ""
-        },
+        shippingAddress: shippingAddress,
         email: user ? user.email : "",
         phoneNumber: "",
     }
 
     const checkoutSchema = [
         yup.object().shape({
-            billingAddress: yup.object().shape({
-                first_name: yup.string().required("required"),
-                last_name: yup.string().required("required"),
-                street1: yup.string().required("required"),
-                street2: yup.string().default(""),
-                city: yup.string().required("required"),
-                state: yup.string().required("required"),
-                zipcode: yup.string().required("required")
-            }),
             shippingAddress: yup.object().shape({
-                isSameAddress: yup.boolean(),
-                first_name: yup.string().when("isSameAddress", {
-                    is: false,
-                    then: yup.string().required("required")
-                }),
-                last_name: yup.string().when("isSameAddress", {
-                    is: false,
-                    then: yup.string().required("required")
-                }),
-                street1: yup.string().when("isSameAddress", {
-                    is: false,
-                    then: yup.string().required("required")
-                }),
-                street2: yup.string(),
-                city: yup.string().when("isSameAddress", {
-                    is: false,
-                    then: yup.string().required("required")
-                }),
-                state: yup.string().when("isSameAddress", {
-                    is: false,
-                    then: yup.string().required("required")
-                }),
-                zipcode: yup.string().when("isSameAddress", {
-                    is: false,
-                    then: yup.string().required("required")
-                }),
+                first_name: yup.string().required("Ce champ est obligatoire"),
+                last_name: yup.string().required("Ce champ est obligatoire"),
+                street1: yup.string().required("Ce champ est obligatoire"),
+                street2: yup.string().default(""),
+                city: yup.string().required("Ce champ est obligatoire"),
+                state: yup.string().required("Ce champ est obligatoire"),
+                zipcode: yup.string().required("Ce champ est obligatoire")
             }),
         }),
         yup.object().shape({
-            email: yup.string().required("required"),
-            phoneNumber: yup.string().required("required"),
+            email: yup.string().required("Ce champ est obligatoire"),
+            phoneNumber: yup.string().required("Ce champ est obligatoire"),
         })
     ]
 
@@ -123,13 +85,6 @@ const Checkout = () => {
 
     const handleFormSubmit = async (values, actions) => {
         setActiveStep(activeStep+1);
-
-        if(isFirstStep && values.shippingAddress.isSameAddress) {
-            actions.setFieldValue("shippingAddress", {
-                ...values.billingAddress,
-                isSameAddress: true,
-            })
-        }
         
         if(isSecondStep){
             makePayment();
@@ -166,7 +121,7 @@ const Checkout = () => {
         <Box width="80%" m="100px auto">
             <Stepper activeStep={activeStep} sx={{ m: "20px 0"}}>
                 <Step>
-                    <StepLabel>Facturation</StepLabel>
+                    <StepLabel>Livraison</StepLabel>
                 </Step>
                 <Step>
                     <StepLabel>Paiement</StepLabel>

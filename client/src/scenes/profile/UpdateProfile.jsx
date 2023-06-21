@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
-import { Box, Typography, TextField, Button, Stepper, useMediaQuery } from "@mui/material";
-import { Formik, getIn } from "formik";
+import { Box, Typography, TextField, Button, useMediaQuery, Select, MenuItem } from "@mui/material";
+import { Formik } from "formik";
 import * as yup from "yup";
 import {shades} from "../../theme"
 
@@ -41,8 +41,8 @@ const UpdateProfile = () => {
     }
 
     const profileSchema = yup.object().shape({
-        username: yup.string().required('Required'),
-        email: yup.string().required('Required').email('Invalid email format'),
+        username: yup.string().required('Ce champ est obligatoire'),
+        email: yup.string().required('Ce champ est obligatoire').email("Format d'email invalide"),
         address: yup.object().shape({
           first_name: yup.string().default(''),
           last_name: yup.string().default(''),
@@ -79,17 +79,78 @@ const UpdateProfile = () => {
             });
     
             if (response.ok) {
-                alert('Profile updated successfully! Changes will appear in a few minutes...');
+                alert('Profil mis à jour avec succès'); 
                 navigate("/");
             } else {
-                alert('An error has occured! Logging out');
+                alert('Une erreur est survenue! Déconnexion maintenant');
                 logoutUser()
             }
         } catch (error) {
-            alert('An error has occured! Logging out');
+            alert('Une erreur est survenue! Déconnexion maintenant');
             logoutUser()
         }
     }
+
+    const wilayahs = [
+        { label: '01 - Adrar', value: 'Adrar' },
+        { label: '02 - Chlef', value: 'Chlef' },
+        { label: '03 - Laghouat', value: 'Laghouat' },
+        { label: '04 - Oum El Bouaghi', value: 'Oum El Bouaghi' },
+        { label: '05 - Batna', value: 'Batna' },
+        { label: '06 - Béjaïa', value: 'Béjaïa' },
+        { label: '07 - Biskra', value: 'Biskra' },
+        { label: '08 - Béchar', value: 'Béchar' },
+        { label: '09 - Blida', value: 'Blida' },
+        { label: '10 - Bouira', value: 'Bouira' },
+        { label: '11 - Tamanrasset', value: 'Tamanrasset' },
+        { label: '12 - Tébessa', value: 'Tébessa' },
+        { label: '13 - Tlemcen', value: 'Tlemcen' },
+        { label: '14 - Tiaret', value: 'Tiaret' },
+        { label: '15 - Tizi Ouzou', value: 'Tizi Ouzou' },
+        { label: '16 - Alger', value: 'Alger' },
+        { label: '17 - Djelfa', value: 'Djelfa' },
+        { label: '18 - Jijel', value: 'Jijel' },
+        { label: '19 - Sétif', value: 'Sétif' },
+        { label: '20 - Saïda', value: 'Saïda' },
+        { label: '21 - Skikda', value: 'Skikda' },
+        { label: '22 - Sidi Bel Abbès', value: 'Sidi Bel Abbès' },
+        { label: '23 - Annaba', value: 'Annaba' },
+        { label: '24 - Guelma', value: 'Guelma' },
+        { label: '25 - Constantine', value: 'Constantine' },
+        { label: '26 - Médéa', value: 'Médéa' },
+        { label: '27 - Mostaganem', value: 'Mostaganem' },
+        { label: '28 - M\'Sila', value: 'M\'Sila' },
+        { label: '29 - Mascara', value: 'Mascara' },
+        { label: '30 - Ouargla', value: 'Ouargla' },
+        { label: '31 - Oran', value: 'Oran' },
+        { label: '32 - El Bayadh', value: 'El Bayadh' },
+        { label: '33 - Illizi', value: 'Illizi' },
+        { label: '34 - Bordj Bou Arréridj', value: 'Bordj Bou Arréridj' },
+        { label: '35 - Boumerdès', value: 'Boumerdès' },
+        { label: '36 - El Tarf', value: 'El Tarf' },
+        { label: '37 - Tindouf', value: 'Tindouf' },
+        { label: '38 - Tissemsilt', value: 'Tissemsilt' },
+        { label: '39 - El Oued', value: 'El Oued' },
+        { label: '40 - Khenchela', value: 'Khenchela' },
+        { label: '41 - Souk Ahras', value: 'Souk Ahras' },
+        { label: '42 - Tipaza', value: 'Tipaza' },
+        { label: '43 - Mila', value: 'Mila' },
+        { label: '44 - Aïn Defla', value: 'Aïn Defla' },
+        { label: '45 - Naâma', value: 'Naâma' },
+        { label: '46 - Aïn Témouchent', value: 'Aïn Témouchent' },
+        { label: '47 - Ghardaïa', value: 'Ghardaïa' },
+        { label: '48 - Relizane', value: 'Relizane' },
+        { label: '49 - El M\'Ghair', value: 'El M\'Ghair' },
+        { label: '50 - El Menia', value: 'El Menia' },
+        { label: '51 - Ouled Djellal', value: 'Ouled Djellal' },
+        { label: '52 - Bordj Baji Mokhtar', value: 'Bordj Baji Mokhtar' },
+        { label: '53 - Béni Abbès', value: 'Béni Abbès' },
+        { label: '54 - Timimoun', value: 'Timimoun' },
+        { label: '55 - Touggourt', value: 'Touggourt' },
+        { label: '56 - Djanet', value: 'Djanet' },
+        { label: '57 - Ain Salah', value: 'Ain Salah' },
+        { label: '58 - Ain Guezzam', value: 'Ain Guezzam' },
+    ];
 
     if(loading) return null
 
@@ -238,10 +299,9 @@ const UpdateProfile = () => {
                                     }
                                     sx={{ gridColumn: "span 2"}}
                                 />
-                                <TextField
+                                <Select
                                     fullWidth
-                                    type="text"
-                                    label="Wilayah"
+                                    label="Wilaya"
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     value={values.address.state}
@@ -252,8 +312,14 @@ const UpdateProfile = () => {
                                         ? errors.state
                                         : null
                                     }
-                                    sx={{ gridColumn: "1fr"}}
-                                />
+                                    sx={{ gridColumn: "1fr" }}
+                                    >
+                                    {wilayahs.map((wilayah) => (
+                                        <MenuItem key={wilayah.value} value={wilayah.value}>
+                                        {wilayah.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
                                 <TextField
                                     fullWidth
                                     type="text"

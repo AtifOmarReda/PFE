@@ -32,10 +32,10 @@ const ModifyItem = () => {
     }
 
     const itemSchema = yup.object().shape({
-        name: yup.string().required("Required"),
-        category: yup.string().required("Required"),
-        mainCategory: yup.string().required("Required"),
-        price: yup.string().required("Required"),
+        name: yup.string().required("Ce champ est obligatoire"),
+        category: yup.string().required("Ce champ est obligatoire"),
+        mainCategory: yup.string().required("Ce champ est obligatoire"),
+        price: yup.string().required("Ce champ est obligatoire"),
         image: yup.mixed().notRequired(),
     })
 

@@ -54,7 +54,7 @@ export const AuthProvider = ({children}) => {
             localStorage.setItem('authTokens', JSON.stringify(data))
         } else logoutUser()
 
-        // if(loading) setLoading(false)
+        if(loading) setLoading(false)
     }
     
     let contextData = {
@@ -66,14 +66,14 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
 
-        // if(loading && authTokens) updateToken()
+        if(loading && authTokens) updateToken()
 
         let fourMinutes = 1000*60*4
         let interval = setInterval(() => {
             if(authTokens) updateToken()
         }, fourMinutes)
         return () => clearInterval(interval)
-    }, [authTokens, loading])
+    }, [authTokens, loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <AuthContext.Provider value={contextData}>

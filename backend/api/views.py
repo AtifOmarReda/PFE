@@ -337,6 +337,8 @@ def get_orders(request):
             }
             order_item_data.append(item_data)
 
+        
+
         client = User.objects.get(id=order_data["client"])
         
         order_data['client'] = client.email

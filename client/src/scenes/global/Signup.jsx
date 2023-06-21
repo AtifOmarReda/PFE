@@ -7,15 +7,15 @@ import { shades } from "../../theme";
 
 const signupSchema = yup.object().shape
 ({
-    username: yup.string().required('Username is a required field'),
-    email: yup.string().required('Email is a required field').email('Invalid email format'),
+    username: yup.string().required("Le nom d'utilisateur est un champ obligatoire."),
+    email: yup.string().required("L'e-mail est un champ obligatoire.").email("Format d'email invalide"),
     password: yup.string()
-    .required('Password is a required field')
-    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/, 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character')
-    .min(8, 'Password must be at least 8 characters long'),
+    .required('Mot de passe est un champ obligatoire')
+    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/, 'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial')
+    .min(8, 'Le mot de passe doit comporter au moins 8 caractères'),
     confirmPassword: yup.string()
-    .oneOf([yup.ref('password'), null], 'Passwords must match')
-    .required('Confirm Password is a required field'),
+    .oneOf([yup.ref('password'), null], 'Les mots de passe doivent correspondre')
+    .required('Confirmer le mot de passe est un champ obligatoire'),
     });
   
 

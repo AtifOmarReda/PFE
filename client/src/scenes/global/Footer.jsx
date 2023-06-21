@@ -31,7 +31,7 @@ const Footer = () => {
                 </Box>
 
                 <Box>
-                    <Typography 
+                    <Typography
                         variant="h4" 
                         fontWeight="bold"
                         mb="30px"

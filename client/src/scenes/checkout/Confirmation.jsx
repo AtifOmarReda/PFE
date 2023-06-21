@@ -31,14 +31,10 @@ const Confirmation = () => {
   }
 
   useEffect(() => {
-
-    if(!orderCreated){ 
-      setOrderCreated(true)
-      createOrder();
-    }
+    createOrder();
     dispatch(resetCart());
 
-  }, [dispatch]);
+  }, [dispatch]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box m="90px auto" width="80%" height="50vh">

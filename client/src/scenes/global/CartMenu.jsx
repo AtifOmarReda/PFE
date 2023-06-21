@@ -130,8 +130,9 @@ const CartMenu = () => {
                                 if(authTokens && cart.length != 0){
                                     navigate("/checkout");
                                     dispatch(setIsCartOpen({}))
-                                } else if (!authTokens) alert("Vous devez être connecté pour procéder au paiement.")
-                                else alert("Vous devez avoir des produits dans le panier pour passer à la caisse.");
+                                } else if (cart.length == 0) alert("Vous devez avoir des produits dans le panier pour passer à la caisse.");
+                                else if (!authTokens) alert("Vous devez être connecté pour procéder au paiement.")
+                                
                             }}
                         >
                             Passer la commande

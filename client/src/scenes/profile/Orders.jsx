@@ -55,7 +55,7 @@ const Orders = () => {
     }
 
     const handleCancelOrder = (orderId) => {
-        cancelOrder(orderId)
+        if(window.confirm("Êtes-vous sûr d'annuler la commande ?")) cancelOrder(orderId)
     }
 
     useEffect(() => {

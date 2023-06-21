@@ -41,7 +41,7 @@ const Navbar = () => {
     useEffect(() => {
         if(authTokens) setIsLoggedIn(true);
         else setIsLoggedIn(false);
-    }, []);
+    }, [authTokens]);
 
     const updateIsLoggedIn = () => {
         setOpen(false);
