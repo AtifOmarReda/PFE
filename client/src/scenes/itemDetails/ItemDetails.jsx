@@ -22,7 +22,7 @@ const ItemDetails = () => {
     const favorites = useSelector((state) => state.favorites.favoriteItems)
     const loadingFavorites = useSelector((state => state.favorites.loading))
     const [removeFavorite, setRemoveFavorite] = useState(false)
-    const { user, authTokens, logoutUser } = useContext(AuthContext)
+    const { authTokens, logoutUser } = useContext(AuthContext)
 
     const checkFavorite = async () => {
         try{
@@ -158,7 +158,7 @@ const ItemDetails = () => {
                                     <Typography 
                                         sx={{ ml: "5px", '&:hover': { cursor: "pointer" }}}
                                         onClick={() => {
-                                            if(user) {
+                                            if(authTokens) {
                                                 dispatch(addToFavorites(item[0]))
                                                 checkFavorite()
                                             } else {
@@ -176,7 +176,7 @@ const ItemDetails = () => {
                                 <Typography 
                                     sx={{ ml: "5px", '&:hover': { cursor: "pointer" }}}
                                     onClick={() => {
-                                        if(user) {
+                                        if(authTokens) {
                                             dispatch(removeFromFavorites(item[0]))
                                             checkFavorite()
                                         }

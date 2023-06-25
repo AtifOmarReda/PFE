@@ -102,7 +102,7 @@ const AddressForm = ({
                 value={values.first_name}
                 name={formattedName("first_name")}
                 error={formattedError("first_name")}
-                helperText={formattedHelper("first_name")}
+                helpertext={formattedHelper("first_name")}
                 sx={{ gridColumn: "span 2"}}
             />
             <TextField
@@ -114,7 +114,7 @@ const AddressForm = ({
                 value={values.last_name}
                 name={formattedName("last_name")}
                 error={formattedError("last_name")}
-                helperText={formattedHelper("last_name")}
+                helpertext={formattedHelper("last_name")}
                 sx={{ gridColumn: "span 2"}}
             />
             <TextField
@@ -126,7 +126,7 @@ const AddressForm = ({
                 value={values.street1}
                 name={formattedName("street1")}
                 error={formattedError("street1")}
-                helperText={formattedHelper("street1")}
+                helpertext={formattedHelper("street1")}
                 sx={{ gridColumn: "span 2"}}
             />
             <TextField
@@ -138,7 +138,7 @@ const AddressForm = ({
                 value={values.street2}
                 name={formattedName("street2")}
                 error={formattedError("street2")}
-                helperText={formattedHelper("street2")}
+                helpertext={formattedHelper("street2")}
                 sx={{ gridColumn: "span 2"}}
             />
             <TextField
@@ -150,7 +150,7 @@ const AddressForm = ({
                 value={values.city}
                 name={formattedName("city")}
                 error={formattedError("city")}
-                helperText={formattedHelper("city")}
+                helpertext={formattedHelper("city")}
                 sx={{ gridColumn: "span 2"}}
             />
             <Select
@@ -161,7 +161,7 @@ const AddressForm = ({
                 value={values.state}
                 name={formattedName("state")}
                 error={formattedError("state")}
-                helperText={formattedHelper("state")}
+                helpertext={formattedHelper("state")}
                 sx={{ gridColumn: "1fr" }}
                 >
                 {wilayas.map((wilaya) => (
@@ -179,7 +179,7 @@ const AddressForm = ({
                 value={values.zipcode}
                 name={formattedName("zipcode")}
                 error={formattedError("zipcode")}
-                helperText={formattedHelper("zipcode")}
+                helpertext={formattedHelper("zipcode")}
                 sx={{ gridColumn: "1fr"}}
             />
         </Box>

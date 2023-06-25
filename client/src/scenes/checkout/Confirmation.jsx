@@ -11,7 +11,6 @@ const Confirmation = () => {
   const dispatch = useDispatch()
   const cart = useSelector((state) => state.cart.cart)
   const { authTokens } = useContext(AuthContext)
-  const [orderCreated, setOrderCreated] = useState(false)
 
   const createOrder = async () => {
     const requestBody = {
@@ -33,7 +32,6 @@ const Confirmation = () => {
   useEffect(() => {
     createOrder();
     dispatch(resetCart());
-
   }, [dispatch]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

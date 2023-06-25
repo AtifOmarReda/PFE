@@ -16,12 +16,36 @@ const stripePromise = loadStripe(
 
 const Checkout = () => {
 
-    const { user, logoutUser, authTokens } = useContext(AuthContext)
+    const { logoutUser, authTokens } = useContext(AuthContext)
 
     const [shippingAddress, setShippingAddress] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [user, setUser] = useState(null)
+    const [loadingUser, setLoadingUser] = useState(true)
 
     const navigate = useNavigate()
+
+    let updateUser = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `JWT ${authTokens.access}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (response.ok) {
+                const profileData = await response.json();
+                setUser(profileData)
+            } else logoutUser()
+
+            setLoadingUser(false)
+
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
 
     const getAddress = async () => {
         try {
@@ -52,13 +76,8 @@ const Checkout = () => {
 
     useEffect(() => {
         getAddress();
-      }, [user]);
-
-    const initialValues = {
-        shippingAddress: shippingAddress,
-        email: user ? user.email : "",
-        phoneNumber: "",
-    }
+        updateUser();
+      }, []);
 
     const checkoutSchema = [
         yup.object().shape({
@@ -74,7 +93,10 @@ const Checkout = () => {
         }),
         yup.object().shape({
             email: yup.string().required("Ce champ est obligatoire"),
-            phoneNumber: yup.string().required("Ce champ est obligatoire"),
+            phoneNumber: yup
+            .number()
+            .required("Ce champ est obligatoire")
+            .max(9999999999, "Le numéro de téléphone ne doit pas dépasser 10 chiffres"),
         })
     ]
 
@@ -84,14 +106,49 @@ const Checkout = () => {
     const isSecondStep = activeStep === 1;
 
     const handleFormSubmit = async (values, actions) => {
-        setActiveStep(activeStep+1);
+        if(isFirstStep) setActiveStep(activeStep+1);
         
         if(isSecondStep){
-            makePayment();
+            if(cart.length > 0){
+                UpdateProfile();
+                makePayment();
+            } else alert("Il doit y avoir des produits dans le panier pour passer au paiement")
         }
 
         actions.setTouched({});
     };
+
+    const UpdateProfile = async (values) => {
+
+        const requestBody = {
+            username: user.username,
+            email: values.email,
+            telephone: values.phoneNumber,
+            address: values.shippingAddress
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/update-profile/', {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'JWT ' + String(authTokens.access)
+              },
+              body: JSON.stringify(requestBody),
+            });
+    
+            if (response.ok) {
+                alert('Profil mis à jour avec succès'); 
+                navigate("/");
+            } else {
+                alert('Une erreur est survenue! Déconnexion maintenant');
+                logoutUser()
+            }
+        } catch (error) {
+            alert('Une erreur est survenue! Déconnexion maintenant');
+            logoutUser()
+        }
+    }
 
     const makePayment = async () => {
         const stripe = await stripePromise
@@ -115,7 +172,13 @@ const Checkout = () => {
         })
     }
 
-    if(loading) return null
+    if(loading || loadingUser) return null
+
+    const initialValues = {
+        shippingAddress: shippingAddress,
+        email: user ? user.email : "",
+        phoneNumber: user ? user.telephone : "",
+    }
 
     return (
         <Box width="80%" m="100px auto">

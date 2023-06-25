@@ -70,7 +70,8 @@ const Orders = () => {
                 <Table>
                     <TableHead>
                     <TableRow>
-                        <TableCell>Utilisateur</TableCell>
+                        <TableCell>Contact</TableCell>
+                        <TableCell>Address</TableCell>
                         <TableCell>Date</TableCell>
                         <TableCell>Produits</TableCell>
                         <TableCell>Annulé</TableCell>
@@ -79,13 +80,25 @@ const Orders = () => {
                     <TableBody>
                     {orders.map((order) => (
                         <TableRow key={order.id}>
-                            <TableCell>{order.client}</TableCell>
+                            <TableCell>
+                                <TableRow>{order.client}</TableRow>
+                                <TableRow>{order.telephone}</TableRow>
+                            </TableCell>
+                            <TableCell>
+                                <TableRow>{order.address.street1}</TableRow>
+                                {order.address.street2 !== "" &&
+                                    <TableRow>{order.address.street2}</TableRow>
+                                }
+                                <TableRow>{order.address.city}</TableRow>
+                                <TableRow>{order.address.state}</TableRow>
+                                <TableRow>{order.address.zipcode}</TableRow>
+                            </TableCell>
                             <TableCell>{order.date}</TableCell>
                             <TableCell>
                                 <List>
                                 {order.order_items.map((item, index) => (
                                     <ListItem key={index}>
-                                        <Typography variant="h4">{item.name} {`x${item.quantity}`}</Typography>
+                                        <Typography>{item.name} {`x${item.quantity}`}</Typography>
                                     </ListItem>
                                 ))}
                                 </List>

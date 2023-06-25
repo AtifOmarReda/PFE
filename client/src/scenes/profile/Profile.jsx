@@ -5,15 +5,45 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import {shades} from "../../theme"
 import AuthContext from "../../context/AuthContext";
 
 const Profile = () => {
 
     const navigate = useNavigate()
-    const { user } = useContext(AuthContext)
+    const { authTokens, logoutUser } = useContext(AuthContext)
+    const [user, setUser] = useState(null)
+    const [loadingUser, setLoadingUser] = useState(true)
+
+    let updateUser = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `JWT ${authTokens.access}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (response.ok) {
+                const profileData = await response.json();
+                setUser(profileData)
+            } else logoutUser()
+
+            setLoadingUser(false)
+
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
+    useEffect(() => {
+        updateUser()
+    }, [])
 
     const isNonMobile = useMediaQuery("(min-width: 600px)");
+
+    if(loadingUser) return null
+
     return (
         <Box marginTop="90px" textAlign="center">
             <Typography variant="h3" marginBottom="20px" >Espace utilisateur</Typography><br></br>

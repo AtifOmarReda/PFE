@@ -8,7 +8,6 @@ export default AuthContext;
 export const AuthProvider = ({children}) => {
 
     let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-    let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
     let [loading, setLoading] = useState(true)
 
     let loginUser = async (formValues) => {
@@ -25,7 +24,6 @@ export const AuthProvider = ({children}) => {
             return false
         } else{
             setAuthTokens(data)
-            setUser(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
             return true
         }
@@ -33,7 +31,6 @@ export const AuthProvider = ({children}) => {
 
     let logoutUser = () => {
         setAuthTokens(null)
-        setUser(null)
         localStorage.removeItem('authTokens')
         if(localStorage.getItem('favoriteItems')) localStorage.removeItem('favoriteItems')
     }
@@ -50,15 +47,13 @@ export const AuthProvider = ({children}) => {
 
         if(response.status === 200) {
             setAuthTokens(data)
-            setUser(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
         } else logoutUser()
 
         if(loading) setLoading(false)
     }
-    
+
     let contextData = {
-        user: user,
         authTokens: authTokens,
         loginUser: loginUser,
         logoutUser: logoutUser
@@ -66,14 +61,18 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
 
-        if(loading && authTokens) updateToken()
+        if(loading && authTokens) {
+            updateToken()
+        }
 
         let fourMinutes = 1000*60*4
         let interval = setInterval(() => {
-            if(authTokens) updateToken()
+            if(authTokens) {
+                updateToken()
+            }
         }, fourMinutes)
         return () => clearInterval(interval)
-    }, [authTokens, loading]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [authTokens, loading])
 
     return (
         <AuthContext.Provider value={contextData}>

@@ -1,5 +1,5 @@
 from django.db import models
-from user.models import User
+from user.models import User, Address
 
 class Category(models.Model):
     name = models.CharField(max_length=200, null=True)
@@ -28,6 +28,8 @@ class Item(models.Model):
     
 class Order(models.Model):
     client = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
+    telephone = models.IntegerField(max_length=10, null=True, blank=True)
     cancelled = models.BooleanField(default=False, null=True, blank=True)
     date = models.DateField(null=True, blank=True)
 

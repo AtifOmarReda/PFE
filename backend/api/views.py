@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.db.models import Q
+from django.contrib.auth.hashers import check_password, make_password
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -24,12 +25,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        token = super().get_token(user)
-
-        token['username'] = user.username
-        token['email'] = user.email
-        token['role'] = user.role
-        
+        token = super().get_token(user)       
         return token
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -90,7 +86,7 @@ class StripeViewApi(APIView):
                         'product_data': {
                             'name': item.name,
                         },
-                        'unit_amount': item.price * 100,  # Stripe requires the amount in cents
+                        'unit_amount': item.price * 100, 
                     },
                     'quantity': product_quantity,
                 })
@@ -130,7 +126,8 @@ class OrderViewApi(APIView):
                 order_item = OrderItem(item=item, quantity=product_quantity)
                 order_items.append(order_item)
 
-            order = Order.objects.create(client=request.user, date=datetime.datetime.now())
+            client = request.user
+            order = Order.objects.create(client=client, address=client.address, telephone=client.telephone, date=datetime.datetime.now())
             
             for order_item in order_items:
                 order_item.order = order
@@ -192,7 +189,10 @@ class ChangeUserRoleView(APIView):
 
         if request.user.role == "administrator":
             if user.role == 'vendor':
-                user.role = 'client'
+                if(user.is_staff):
+                    user.role = 'administrator'
+                else:
+                    user.role = 'client'
             else:
                 user.role = 'vendor'
         else:
@@ -337,11 +337,13 @@ def get_orders(request):
             }
             order_item_data.append(item_data)
 
-        
-
         client = User.objects.get(id=order_data["client"])
-        
+        address_serializer = AddressSerializer(client.address)
+        address_data = address_serializer.data
+
         order_data['client'] = client.email
+        order_data['address'] = address_data
+        order_data['phone'] = client.telephone
         order_data['order_items'] = order_item_data
         serialized_data.append(order_data)
     
@@ -382,7 +384,7 @@ def cancel_order(request, order_id):
     try:
         order = Order.objects.get(id=order_id)
     except Order.DoesNotExist:
-        return Response({"error": "Order not found"}, status=404)
+        return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
 
     order.cancelled = True
     order.save()
@@ -390,3 +392,31 @@ def cancel_order(request, order_id):
     serializer = OrderSerializer(order)
     return Response(serializer.data)
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def modify_password(request):
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    user = request.user
+
+    if not check_password(old_password, user.password):
+        return Response({'error': 'Incorrect old password'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(new_password)
+    user.save()
+
+    return Response({'success': 'Password updated'}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_profile(request):
+    user = request.user
+    profile_data = {
+        'username': user.username,
+        'email': user.email,
+        'role': user.role,
+        'telephone': user.telephone,
+    }
+    return Response(profile_data)

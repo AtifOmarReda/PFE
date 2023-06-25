@@ -110,7 +110,6 @@ const Login = ({updateIsLoggedIn, loginUser}) => {
                     )
                 }
             </Formik>
-            <a href="#" style={{textDecorationLine: "none", marginTop: "15px"}}>Mot de passe oublié?</a>
         </Box>
     )
 }

@@ -8,9 +8,11 @@ import {shades} from "../../theme"
 
 const UpdateProfile = () => {
 
-    const {user, authTokens, logoutUser} = useContext(AuthContext)
+    const {authTokens, logoutUser} = useContext(AuthContext)
     const [address, setAddress] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [user, setUser] = useState(null)
+    const [loadingUser, setLoadingUser] = useState(true)
     const isNonMobile = useMediaQuery("(min-width: 600px)")
 
     const getAddress = async () => {
@@ -40,9 +42,35 @@ const UpdateProfile = () => {
         }
     }
 
+    let updateUser = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `JWT ${authTokens.access}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (response.ok) {
+                const profileData = await response.json();
+                setUser(profileData)
+            } else logoutUser()
+
+            setLoadingUser(false)
+
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
     const profileSchema = yup.object().shape({
         username: yup.string().required('Ce champ est obligatoire'),
         email: yup.string().required('Ce champ est obligatoire').email("Format d'email invalide"),
+        telephone: yup
+        .number()
+        .required("Ce champ est obligatoire")
+        .max(9999999999, "Le numéro de téléphone ne doit pas dépasser 10 chiffres"),
         address: yup.object().shape({
           first_name: yup.string().default(''),
           last_name: yup.string().default(''),
@@ -56,13 +84,8 @@ const UpdateProfile = () => {
 
     useEffect(() => {
         getAddress();
-      }, [user]);
-
-    const initialValues = {
-        username: user.username,
-        email: user.email,
-        address: address
-    }
+        updateUser();
+      }, []);
 
     const navigate = useNavigate()
 
@@ -80,12 +103,14 @@ const UpdateProfile = () => {
     
             if (response.ok) {
                 alert('Profil mis à jour avec succès'); 
+                updateUser();
                 navigate("/");
             } else {
                 alert('Une erreur est survenue! Déconnexion maintenant');
                 logoutUser()
             }
         } catch (error) {
+            console.error(error)
             alert('Une erreur est survenue! Déconnexion maintenant');
             logoutUser()
         }
@@ -152,7 +177,14 @@ const UpdateProfile = () => {
         { label: '58 - Ain Guezzam', value: 'Ain Guezzam' },
     ];
 
-    if(loading) return null
+    if(loading || loadingUser) return null
+
+    const initialValues = {
+        username: user.username,
+        email: user.email,
+        telephone: user.telephone,
+        address: address
+    }
 
     return (
         <Box width="80%" m="100px auto">
@@ -212,6 +244,23 @@ const UpdateProfile = () => {
                                     helperText={
                                         touched.email && errors.email
                                         ? errors.email
+                                        : null
+                                    }
+                                    sx={{ gridColumn: "span 4"}}
+                                />
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    type="number"
+                                    label="Numéro de téléphone"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.telephone}
+                                    name="telephone"
+                                    error={!!touched.telephone && !!errors.telephone}
+                                    helperText={
+                                        touched.telephone && errors.telephone
+                                        ? errors.telephone
                                         : null
                                     }
                                     sx={{ gridColumn: "span 4"}}
@@ -369,7 +418,8 @@ const UpdateProfile = () => {
                         padding: "15px 40px",
                         marginTop: "20px"
                     }}
-            >Changer le mot de passe</Button>
+                onClick={() => navigate("../profile/modify-password")}
+            >Modifier le mot de passe</Button>
         </Box>
     )
 }

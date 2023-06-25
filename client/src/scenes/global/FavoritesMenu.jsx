@@ -24,7 +24,7 @@ const FavoritesMenu = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const isFavoriteOpen = useSelector((state) => state.favorites.isFavoriteOpen)
-    const { authTokens, user, logoutUser } = useContext(AuthContext)
+    const { authTokens, logoutUser } = useContext(AuthContext)
     const favorites = useSelector((state) => state.favorites.favoriteItems)
     const loading = useSelector((state) => state.favorites.loading)
 
